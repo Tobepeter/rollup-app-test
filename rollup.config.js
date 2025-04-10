@@ -1,21 +1,39 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import { terser } from 'rollup-plugin-terser';
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import typescript from '@rollup/plugin-typescript'
+import copy from 'rollup-plugin-copy'
+import livereload from 'rollup-plugin-livereload'
+import serve from 'rollup-plugin-serve'
+import { terser } from 'rollup-plugin-terser'
+import replace from '@rollup/plugin-replace'
 
-// `npm run build` -> `production` is true
-// `npm run dev` -> `production` is false
-const production = !process.env.ROLLUP_WATCH;
+const isProd = !process.env.ROLLUP_WATCH
+const isDev = !isProd
 
 export default {
-	input: 'src/main.js',
-	output: {
-		file: 'public/bundle.js',
-		format: 'iife', // immediately-invoked function expression — suitable for <script> tags
-		sourcemap: true
-	},
-	plugins: [
-		resolve(), // tells Rollup how to find date-fns in node_modules
-		commonjs(), // converts date-fns to ES modules
-		production && terser() // minify, but only in production
-	]
-};
+  input: 'src/main.ts',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'iife',
+    sourcemap: true,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript({
+      sourceMap: !isProd,
+      inlineSources: !isProd,
+    }),
+    copy({
+      targets: [{ src: 'public/*', dest: 'dist' }],
+    }),
+    isDev &&
+      serve({
+        open: true,
+        contentBase: 'dist',
+        port: 3000,
+      }),
+    isDev && livereload('dist'),
+    isProd && terser(),
+  ],
+}
