@@ -27,9 +27,13 @@ export default {
     copy({
       targets: [{ src: 'public/*', dest: 'dist' }],
     }),
+    replace({
+      'IS_DEV': JSON.stringify(isDev),
+      'IS_PROD': JSON.stringify(isProd),
+    }),
     isDev &&
       serve({
-        open: true,
+        open: false,
         contentBase: 'dist',
         port: 3000,
       }),
