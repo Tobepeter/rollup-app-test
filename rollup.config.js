@@ -6,30 +6,29 @@ import livereload from 'rollup-plugin-livereload'
 import serve from 'rollup-plugin-serve'
 import { terser } from 'rollup-plugin-terser'
 import replace from '@rollup/plugin-replace'
+import esbuild from 'rollup-plugin-esbuild'
 
 const isProd = !process.env.ROLLUP_WATCH
 const isDev = !isProd
 
-export default {
+/** @type {import('rollup').RollupOptions} */
+const config = {
   input: 'src/main.ts',
   output: {
     file: 'dist/bundle.js',
     format: 'iife',
-    sourcemap: true,
+    sourcemap: isDev,
   },
   plugins: [
     resolve(),
     commonjs(),
-    typescript({
-      sourceMap: !isProd,
-      inlineSources: !isProd,
-    }),
+    isDev ? getEsbuildPlugin() : getTypescriptPlugin(),
     copy({
       targets: [{ src: 'public/*', dest: 'dist' }],
     }),
     replace({
-      'IS_DEV': JSON.stringify(isDev),
-      'IS_PROD': JSON.stringify(isProd),
+      IS_DEV: JSON.stringify(isDev),
+      IS_PROD: JSON.stringify(isProd),
     }),
     isDev &&
       serve({
@@ -41,3 +40,18 @@ export default {
     isProd && terser(),
   ],
 }
+
+function getTypescriptPlugin() {
+  return typescript({
+    sourceMap: isDev,
+    inlineSources: isDev,
+  })
+}
+
+function getEsbuildPlugin() {
+  return esbuild({
+    sourceMap: isDev,
+  })
+}
+
+export default config

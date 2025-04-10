@@ -1,5 +1,5 @@
 class Test {
-  str: string = 'test'
+  str = 'test'
 }
 
 export const test = new Test()

@@ -20,6 +20,7 @@
     "@typescript-eslint/parser": "^8.29.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
+    "esbuild": "^0.25.2",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
     "live-server": "^1.2.2",
@@ -35,6 +36,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "date-fns": "^2.16.1"
+    "date-fns": "^2.16.1",
+    "rollup-plugin-esbuild": "^6.2.1"
   }
 }
